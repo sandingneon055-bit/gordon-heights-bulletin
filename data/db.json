@@ -1,0 +1,180 @@
+{
+  "users": [
+    {
+      "id": "admin-001",
+      "username": "admin",
+      "email": "admin@gordonheights.gov.ph",
+      "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+      "role": "admin",
+      "full_name": "Barangay Administrator",
+      "address": "",
+      "contact": "(047) 222-1234",
+      "created_at": "2026-01-01T00:00:00",
+      "is_active": true
+    }
+  ],
+  "announcements": [
+    {
+      "id": "ann-001",
+      "title": "Barangay Gordon Heights Official Information System Launch",
+      "content": "We are pleased to announce the official launch of the Barangay Gordon Heights Information and Bulletin System. Residents may now register an account to view announcements, submit reports, and receive emergency alerts. For assistance, visit the Barangay Hall during office hours (Monday to Friday, 8:00 AM to 5:00 PM).",
+      "category": "general",
+      "author": "Barangay Administrator",
+      "author_id": "admin-001",
+      "created_at": "2026-03-11T08:00:00",
+      "updated_at": "2026-03-11T08:00:00",
+      "is_pinned": true,
+      "is_published": true,
+      "views": 0,
+      "audience": "All Residents"
+    }
+  ],
+  "reports": [],
+  "events": [
+    {
+      "id": "evt-001",
+      "title": "Barangay Council Regular Session",
+      "description": "Monthly regular session of the Barangay Council. Open to all residents.",
+      "date": "2026-03-25",
+      "time": "09:00",
+      "location": "Barangay Gordon Heights Hall",
+      "category": "governance",
+      "created_by": "admin-001",
+      "created_at": "2026-03-11T08:00:00"
+    },
+    {
+      "id": "evt-002",
+      "title": "Monthly Community Clean-Up Drive",
+      "description": "Join the monthly Barangay Clean-Up Drive. All households are encouraged to send at least one representative. Cleaning materials will be provided.",
+      "date": "2026-03-22",
+      "time": "06:00",
+      "location": "Barangay Gordon Heights (All Puroks)",
+      "category": "environment",
+      "created_by": "admin-001",
+      "created_at": "2026-03-11T08:00:00"
+    }
+  ],
+  "alerts": [],
+  "hotlines": [
+    {
+      "id": "hot-001",
+      "name": "Barangay Gordon Heights Hall",
+      "number": "223-54-97",
+      "category": "barangay",
+      "icon": "🏛",
+      "available": "Mon–Fri 8AM–5PM"
+    },
+    {
+      "id": "hot-002",
+      "name": "Olongapo City Fire Station",
+      "number": "223-1415",
+      "category": "fire",
+      "icon": "🚒",
+      "available": "24/7"
+    },
+    {
+      "id": "hot-003",
+      "name": "Olongapo City Police Station 5",
+      "number": "222-04-02",
+      "category": "police",
+      "icon": "👮",
+      "available": "24/7"
+    },
+    {
+      "id": "hot-004",
+      "name": "James L. Gordon Memorial Hospital",
+      "number": "(047) 602-1229",
+      "category": "medical",
+      "icon": "🏥",
+      "available": "24/7"
+    },
+    {
+      "id": "hot-005",
+      "name": "Olongapo CDRRMO",
+      "number": "0998-593-7446",
+      "category": "disaster",
+      "icon": "🌊",
+      "available": "24/7"
+    },
+    {
+      "id": "hot-006",
+      "name": "Subic Water",
+      "number": "(047) 252-2960",
+      "category": "utilities",
+      "icon": "💧",
+      "available": "Mon–Sat 8AM–5PM"
+    },
+    {
+      "id": "hot-007",
+      "name": "National Emergency Hotline",
+      "number": "911",
+      "category": "emergency",
+      "icon": "🆘",
+      "available": "24/7"
+    },
+    {
+      "id": "hot-008",
+      "name": "Philippine Red Cross",
+      "number": "143",
+      "category": "medical",
+      "icon": "🏥",
+      "available": "24/7"
+    }
+  ],
+  "iot_sensors": [
+    {
+      "id": "iot-001",
+      "name": "Flood Sensor – Purok 1 Creek",
+      "location": "Purok 1",
+      "type": "flood",
+      "status": "normal",
+      "reading": "0.3m",
+      "unit": "m",
+      "threshold": 1.5,
+      "last_updated": "2026-03-11T08:00:00"
+    },
+    {
+      "id": "iot-002",
+      "name": "Flood Sensor – Lower Purok 4",
+      "location": "Purok 4",
+      "type": "flood",
+      "status": "normal",
+      "reading": "0.2m",
+      "unit": "m",
+      "threshold": 1.5,
+      "last_updated": "2026-03-11T08:00:00"
+    },
+    {
+      "id": "iot-003",
+      "name": "Weather Station – Barangay Hall",
+      "location": "Hall",
+      "type": "weather",
+      "status": "online",
+      "reading": "30°C",
+      "unit": "°C",
+      "threshold": null,
+      "last_updated": "2026-03-11T08:00:00"
+    },
+    {
+      "id": "iot-004",
+      "name": "Air Quality Monitor – Market",
+      "location": "Market",
+      "type": "air",
+      "status": "online",
+      "reading": "AQI 38",
+      "unit": "AQI",
+      "threshold": 100,
+      "last_updated": "2026-03-11T08:00:00"
+    }
+  ],
+  "puroks": [
+    "Purok 1",
+    "Purok 2",
+    "Purok 3",
+    "Purok 4",
+    "Purok 5",
+    "Purok 6",
+    "Purok 7",
+    "Purok 8"
+  ]
+}

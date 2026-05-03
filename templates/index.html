@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Barangay Gordon Heights – Bulletin System</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/static/css/styles.css"/>
+</head>
+<body>
+
+<!-- ══ AUTH SCREEN ══════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-bg">
+    <div class="auth-pattern"></div>
+    <div class="auth-glow"></div>
+  </div>
+
+  <div class="auth-container">
+    <!-- Branding -->
+    <div class="auth-brand">
+      <img src="/static/images/logo.png" alt="Barangay Gordon Heights Seal" class="brand-seal-img"/>
+      <div class="brand-text">
+        <h1 class="brand-name">Barangay Gordon Heights</h1>
+        <p class="brand-loc">Olongapo City, Zambales</p>
+        <p class="brand-sub">Official Community Bulletin System</p>
+      </div>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="showAuthTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-register" onclick="showAuthTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form" id="form-login">
+      <div class="field-group">
+        <label class="field-label">Username or Email</label>
+        <input type="text" class="field-input" id="login-identifier" placeholder="Enter username or email" autocomplete="username"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Password</label>
+        <div class="input-wrap">
+          <input type="password" class="field-input" id="login-password" placeholder="Enter password" autocomplete="current-password"/>
+          <button class="eye-btn" onclick="togglePass('login-password', this)">👁</button>
+        </div>
+      </div>
+      <div class="auth-error" id="login-error"></div>
+      <label class="terms-check-wrap">
+        <input type="checkbox" id="login-terms" onchange="toggleLoginBtn()"/>
+        <span>I agree to the <a href="#" onclick="showTerms(event)" class="terms-link">Terms and Conditions</a></span>
+      </label>
+      <button class="btn-auth" id="login-btn" onclick="doLogin()" disabled style="opacity:.5;cursor:not-allowed">Sign In</button>
+      <div class="divider-line"><span>or</span></div>
+      <button class="btn-guest" onclick="showAuthTab('guest')">📷 Quick Report — No Login Needed</button>
+      <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">For visitors &amp; non-citizens of Barangay Gordon Heights</p>
+    </div>
+
+    <!-- GUEST QUICK REPORT -->
+    <div class="auth-form" id="form-guest" style="display:none">
+      <div class="guest-banner">
+        <div style="font-size:28px">📷</div>
+        <div><div style="font-weight:700;font-size:14px;color:var(--navy)">Quick Incident Report</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Take a photo — no account needed</div></div>
+      </div>
+      <div class="field-group"><label class="field-label">Your Name *</label>
+        <input type="text" class="field-input" id="guest-name" placeholder="Enter your full name"/></div>
+      <div class="field-group"><label class="field-label">Contact Number (optional)</label>
+        <input type="text" class="field-input" id="guest-contact" placeholder="09XX-XXX-XXXX"/></div>
+      <div class="field-group"><label class="field-label">Description *</label>
+        <textarea class="field-input" id="guest-desc" placeholder="Briefly describe what you witnessed..." style="min-height:70px;resize:vertical"></textarea></div>
+      <div class="field-group"><label class="field-label">Photo *</label>
+        <div class="camera-box" id="camera-box" onclick="triggerCamera()">
+          <video id="camera-video" autoplay playsinline style="display:none;width:100%;border-radius:8px;max-height:180px;object-fit:cover"></video>
+          <canvas id="camera-canvas" style="display:none"></canvas>
+          <img id="photo-preview" style="display:none;width:100%;border-radius:8px;max-height:180px;object-fit:cover"/>
+          <div id="camera-placeholder" style="text-align:center;padding:24px 0">
+            <div style="font-size:36px;margin-bottom:6px">📷</div>
+            <div style="font-size:13px;color:var(--muted)">Tap to open camera or upload photo</div>
+          </div>
+        </div>
+        <div id="camera-controls" style="display:none;display:flex;gap:6px;margin-top:8px">
+          <button class="btn-cam" id="btn-capture" onclick="capturePhoto()">📸 Capture Photo</button>
+          <button class="btn-cam outline" onclick="retakePhoto()">🔄 Retake</button>
+        </div>
+        <div id="photo-actions" style="display:none;margin-top:8px">
+          <button class="btn-cam outline" style="width:100%" onclick="retakePhoto()">🔄 Retake Photo</button>
+        </div>
+        <input type="file" id="photo-upload" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this)"/>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="btn-cam" onclick="startCamera()" style="flex:1">📷 Camera</button>
+          <button class="btn-cam outline" onclick="document.getElementById('photo-upload').click()" style="flex:1">🖼 Upload</button>
+        </div>
+      </div>
+      <div class="field-group"><label class="field-label">📍 Your Location</label>
+        <div class="location-box" id="location-box">
+          <span id="location-text" style="font-size:13px;color:var(--muted)">Location not yet captured</span>
+        </div>
+        <button class="btn-cam outline" style="margin-top:6px;width:100%" onclick="getLocation()">📍 Capture My Location</button>
+      </div>
+      <div style="background:#f0f8ff;border:1px solid #b5d4f4;border-radius:8px;padding:10px;font-size:11px;color:#185FA5;margin-bottom:12px">
+        ℹ️ Your photo, description, date &amp; time, and location will be sent directly to the Barangay Admin.
+      </div>
+      <div class="auth-error" id="guest-error"></div>
+      <button class="btn-auth" id="guest-btn" onclick="submitGuestReport()" style="background:var(--red)">📤 Send Report to Barangay Admin</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-form" id="form-register" style="display:none">
+      <div class="field-group" style="margin-bottom:16px">
+        <label class="field-label">I am a *</label>
+        <div class="citizen-type-row">
+          <div class="citizen-type-btn active" id="ctype-citizen" onclick="setCitizenType('citizen')">
+            <div style="font-size:22px;margin-bottom:4px">🏘️</div>
+            <div style="font-weight:700;font-size:13px">Citizen</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Resident of Gordon Heights</div>
+          </div>
+          <div class="citizen-type-btn" id="ctype-noncitizen" onclick="setCitizenType('non_citizen')">
+            <div style="font-size:22px;margin-bottom:4px">🧳</div>
+            <div style="font-weight:700;font-size:13px">Non-Citizen</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Visitor / Non-Resident</div>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Full Name *</label>
+          <input type="text" class="field-input" id="reg-name" placeholder="Juan Dela Cruz"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Username *</label>
+          <input type="text" class="field-input" id="reg-username" placeholder="juandelacruz"/>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Email Address *</label>
+        <input type="email" class="field-input" id="reg-email" placeholder="juan@email.com"/>
+      </div>
+      <div id="citizen-address-fields">
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Block *</label>
+          <input type="text" class="field-input" id="reg-block" placeholder="e.g. Block 5"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Lot *</label>
+          <input type="text" class="field-input" id="reg-lot" placeholder="e.g. Lot 12"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Street *</label>
+          <input type="text" class="field-input" id="reg-street-addr" placeholder="e.g. Sampaguita St."/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Contact Number *</label>
+          <input type="text" class="field-input" id="reg-contact" placeholder="09XX-XXX-XXXX"/>
+        </div>
+      </div>
+      </div><!-- end citizen-address-fields -->
+      <div id="noncitizen-contact-field" style="display:none">
+        <div class="field-group">
+          <label class="field-label">Contact Number *</label>
+          <input type="text" class="field-input" id="reg-contact-nc" placeholder="09XX-XXX-XXXX"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Password *</label>
+          <div class="input-wrap">
+            <input type="password" class="field-input" id="reg-password" placeholder="Min. 6 characters"/>
+            <button class="eye-btn" onclick="togglePass('reg-password', this)">👁</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Confirm Password *</label>
+          <input type="password" class="field-input" id="reg-confirm" placeholder="Repeat password"/>
+        </div>
+      </div>
+      <div class="auth-error" id="register-error"></div>
+      <label class="terms-check-wrap">
+        <input type="checkbox" id="register-terms" onchange="toggleRegisterBtn()"/>
+        <span>I have read and agree to the <a href="#" onclick="showTerms(event)" class="terms-link">Terms and Conditions</a></span>
+      </label>
+      <button class="btn-auth" id="register-btn" onclick="doRegister()" disabled style="opacity:.5;cursor:not-allowed">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TERMS AND CONDITIONS MODAL ══════════════════════════ -->
+<div class="terms-overlay" id="terms-overlay" onclick="closeTerms(event)">
+  <div class="terms-modal">
+    <div class="terms-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <img src="/static/images/logo.png" alt="Logo" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>
+        <div>
+          <div class="terms-title">Terms and Conditions</div>
+          <div class="terms-sub">Barangay Gordon Heights Bulletin System · Olongapo City, Zambales</div>
+        </div>
+      </div>
+      <button class="terms-close" onclick="closeTerms()">✕</button>
+    </div>
+    <div class="terms-body">
+      <div class="terms-effective">Effective Date: January 1, 2026 &nbsp;·&nbsp; Version 1.0</div>
+
+      <p class="terms-intro">Welcome to the <strong>Barangay Gordon Heights Official Bulletin and Information System</strong>. By accessing or using this system, you agree to be bound by the following Terms and Conditions. Please read them carefully before registering or logging in.</p>
+
+      <div class="terms-section">
+        <div class="terms-section-title">1. Acceptance of Terms</div>
+        <p>By creating an account or using any feature of this system, you confirm that you have read, understood, and agreed to these Terms and Conditions. If you do not agree, please do not use this system.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">2. Purpose of the System</div>
+        <p>The Barangay Gordon Heights Bulletin System is an official digital platform designed to:</p>
+        <ul>
+          <li>Disseminate official barangay announcements and information</li>
+          <li>Provide emergency alerts and IoT-based community safety notifications</li>
+          <li>Allow residents and visitors to report community issues and incidents</li>
+          <li>Display emergency hotlines and event schedules</li>
+        </ul>
+        <p>This system is operated by the Office of the Barangay of Gordon Heights, Olongapo City, Zambales, Philippines.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">3. User Accounts and Registration</div>
+        <p><strong>3.1 Citizens / Residents</strong> — Residents of Barangay Gordon Heights may register using their full name, email address, block/lot/street address, and contact number. You are responsible for maintaining the confidentiality of your account credentials.</p>
+        <p><strong>3.2 Non-Citizens / Visitors</strong> — Visitors or non-residents may register with limited access. Non-citizen accounts are restricted to submitting photo incident reports, viewing emergency alerts, and accessing hotlines.</p>
+        <p><strong>3.3 Accuracy of Information</strong> — You agree to provide accurate, current, and complete information during registration. Providing false information may result in account deactivation.</p>
+        <p><strong>3.4 Account Security</strong> — You are responsible for all activities that occur under your account. Notify the Barangay Admin immediately of any unauthorized use.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">4. Acceptable Use Policy</div>
+        <p>You agree NOT to use this system to:</p>
+        <ul>
+          <li>Submit false, misleading, or fraudulent reports or information</li>
+          <li>Upload inappropriate, offensive, or illegal content</li>
+          <li>Impersonate any person or barangay official</li>
+          <li>Attempt to gain unauthorized access to the system or other user accounts</li>
+          <li>Use the system for any commercial or unauthorized purpose</li>
+          <li>Harass, threaten, or harm other users or barangay officials</li>
+        </ul>
+        <p>Violation of these terms may result in immediate account suspension and may be reported to the appropriate authorities.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">5. Photo and Incident Reports</div>
+        <p><strong>5.1</strong> When submitting a photo report, your image, GPS location, date, and time will be automatically captured and sent to the Barangay Admin.</p>
+        <p><strong>5.2</strong> By submitting a report, you confirm that the information and photo are truthful and accurately represent the incident you witnessed.</p>
+        <p><strong>5.3</strong> Submitting false incident reports is a violation of these terms and may constitute a criminal offense under Philippine law.</p>
+        <p><strong>5.4</strong> The Barangay reserves the right to act on, archive, or remove submitted reports at its discretion.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">6. Privacy and Data Collection</div>
+        <p><strong>6.1</strong> This system collects personal information including your name, email, address, contact number, and location data solely for the purpose of providing barangay services.</p>
+        <p><strong>6.2</strong> Your information will not be sold, shared, or disclosed to third parties without your consent, except as required by law or by order of a competent authority.</p>
+        <p><strong>6.3</strong> Location data captured during incident reports is used solely to identify the location of the reported incident.</p>
+        <p><strong>6.4</strong> This system complies with the <strong>Data Privacy Act of 2012 (Republic Act No. 10173)</strong> of the Philippines.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">7. Emergency Alerts and IoT Sensors</div>
+        <p><strong>7.1</strong> Emergency alerts are issued by authorized Barangay Officials only. These alerts are provided for informational and safety purposes.</p>
+        <p><strong>7.2</strong> IoT sensor data displayed in this system is intended to support community safety. The Barangay does not guarantee the 100% accuracy of sensor readings at all times.</p>
+        <p><strong>7.3</strong> In the event of a genuine emergency, always follow the instructions of authorized emergency personnel.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">8. Intellectual Property</div>
+        <p>The Barangay Gordon Heights official seal, name, and all content published through this system are the property of the Barangay of Gordon Heights, Olongapo City. Unauthorized reproduction or use is prohibited.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">9. Limitation of Liability</div>
+        <p>The Barangay of Gordon Heights shall not be held liable for any damages arising from the use or inability to use this system, including but not limited to service interruptions, data loss, or inaccurate information caused by technical issues.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">10. Modifications to Terms</div>
+        <p>The Barangay reserves the right to update or modify these Terms and Conditions at any time. Users will be notified of significant changes through the system. Continued use of the system after changes constitutes acceptance of the updated terms.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">11. Governing Law</div>
+        <p>These Terms and Conditions are governed by the laws of the <strong>Republic of the Philippines</strong>. Any disputes arising from the use of this system shall be subject to the jurisdiction of the appropriate courts in Olongapo City, Zambales.</p>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-section-title">12. Contact</div>
+        <p>For questions or concerns regarding these Terms and Conditions, please contact:</p>
+        <div class="terms-contact">
+          <div>🏛 <strong>Barangay Gordon Heights</strong></div>
+          <div>📍 Gordon Heights, Olongapo City, Zambales, Philippines</div>
+          <div>📞 (047) 222-1234</div>
+          <div>📧 admin@gordonheights.gov.ph</div>
+          <div>🕐 Monday – Friday, 8:00 AM – 5:00 PM</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="terms-footer">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center">By clicking "I Agree", you confirm you have read and accept these Terms and Conditions.</p>
+      <button class="btn-auth" onclick="agreeTerms()" style="margin-bottom:0">✅ I Agree to the Terms and Conditions</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ════════════════════════════════════════════════ -->
+<div id="app-shell" style="display:none">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-brand">
+        <img src="/static/images/logo.png" alt="Seal" class="tb-seal-img"/>
+        <div>
+          <div class="tb-name">Barangay Gordon Heights</div>
+          <div class="tb-loc">Olongapo City, Zambales</div>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div class="global-search">
+        <span class="gs-icon">🔍</span>
+        <input type="text" id="global-search-input" placeholder="Search announcements…" oninput="globalSearch(this.value)"/>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="alert-bell" id="alert-bell" onclick="navigate('alerts')">
+        🔔 <span class="bell-count" id="bell-count" style="display:none">0</span>
+      </button>
+      <div class="user-chip" onclick="toggleUserMenu()">
+        <div class="user-avatar" id="topbar-avatar">?</div>
+        <div class="user-info-wrap">
+          <div class="user-chip-name" id="topbar-name">—</div>
+          <div class="user-chip-role" id="topbar-role">—</div>
+        </div>
+        <span class="chip-arrow">▾</span>
+      </div>
+      <div class="user-menu" id="user-menu">
+        <div class="um-item" onclick="navigate('profile')">👤 My Profile</div>
+        <div class="um-divider"></div>
+        <div class="um-item um-logout" onclick="safeLogout()">🚪 Sign Out</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-section">Menu</div>
+
+      <!-- Resident Nav -->
+      <div id="nav-resident">
+        <div class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+          <span class="ni">🏠</span> Dashboard
+        </div>
+        <div class="nav-item" data-page="announcements" onclick="navigate('announcements')">
+          <span class="ni">📢</span> Announcements
+          <span class="nav-badge" id="ann-count-badge"></span>
+        </div>
+        <div class="nav-item" data-page="calendar" onclick="navigate('calendar')">
+          <span class="ni">📅</span> Event Calendar
+        </div>
+        <div class="nav-item" data-page="alerts" onclick="navigate('alerts')">
+          <span class="ni">🚨</span> Emergency Alerts
+          <span class="nav-badge danger" id="alert-count-badge"></span>
+        </div>
+        <div class="nav-item" data-page="hotlines" onclick="navigate('hotlines')">
+          <span class="ni">📞</span> Hotlines
+        </div>
+        <div class="nav-item" data-page="my-reports" onclick="navigate('my-reports')">
+          <span class="ni">📝</span> My Reports
+        </div>
+        <div class="nav-item" data-page="report-issue" onclick="navigate('report-issue')">
+          <span class="ni">⚠️</span> Report an Issue
+        </div>
+        <div class="nav-item" data-page="photo-report" onclick="navigate('photo-report')">
+          <span class="ni">📷</span> Photo Report
+        </div>
+      </div>
+
+      <!-- Non-Citizen Nav -->
+      <div id="nav-noncitizen" style="display:none">
+        <div class="nav-item active" data-page="nc-dashboard" onclick="navigate('nc-dashboard')">
+          <span class="ni">🏠</span> Home
+        </div>
+        <div class="nav-item" data-page="nc-report" onclick="navigate('nc-report')">
+          <span class="ni">📷</span> Report Incident
+        </div>
+        <div class="nav-item" data-page="alerts" onclick="navigate('alerts')">
+          <span class="ni">🚨</span> Emergency Alerts
+          <span class="nav-badge danger" id="nc-alert-badge"></span>
+        </div>
+        <div class="nav-item" data-page="hotlines" onclick="navigate('hotlines')">
+          <span class="ni">📞</span> Hotlines
+        </div>
+      </div>
+
+      <!-- Admin Nav -->
+      <div id="nav-admin" style="display:none">
+        <div class="nav-item active" data-page="admin-dashboard" onclick="navigate('admin-dashboard')">
+          <span class="ni">🏠</span> Dashboard
+        </div>
+        <div class="sidebar-section" style="margin-top:8px">Announcements</div>
+        <div class="nav-item" data-page="admin-post" onclick="navigate('admin-post')">
+          <span class="ni">✏️</span> Post Announcement
+        </div>
+        <div class="nav-item" data-page="admin-manage" onclick="navigate('admin-manage')">
+          <span class="ni">📋</span> Manage Posts
+        </div>
+        <div class="sidebar-section" style="margin-top:8px">Community</div>
+        <div class="nav-item" data-page="admin-reports" onclick="navigate('admin-reports')">
+          <span class="ni">📝</span> Issue Reports
+          <span class="nav-badge danger" id="pending-badge"></span>
+        </div>
+        <div class="nav-item" data-page="admin-events" onclick="navigate('admin-events')">
+          <span class="ni">📅</span> Events
+        </div>
+        <div class="nav-item" data-page="admin-alerts" onclick="navigate('admin-alerts')">
+          <span class="ni">🚨</span> Send Alert
+        </div>
+        <div class="sidebar-section" style="margin-top:8px">System</div>
+        <div class="nav-item" data-page="admin-analytics" onclick="navigate('admin-analytics')">
+          <span class="ni">📊</span> Analytics
+        </div>
+        <div class="nav-item" data-page="admin-users" onclick="navigate('admin-users')">
+          <span class="ni">👥</span> Residents
+        </div>
+        <div class="nav-item" data-page="admin-sensors" onclick="navigate('admin-sensors')">
+          <span class="ni">📡</span> IoT Sensors
+        </div>
+        <div class="nav-item" data-page="admin-guest-reports" onclick="navigate('admin-guest-reports')">
+          <span class="ni">📷</span> Photo Reports
+          <span class="nav-badge danger" id="photo-reports-badge"></span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sf-sdg"><span>SDG 11</span><span>SDG 16</span></div>
+        <div class="sf-version">v1.0.0 · Gordon Heights Bulletin</div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="main-content">
+
+      <!-- ══ RESIDENT DASHBOARD ══ -->
+      <section class="page" id="pg-dashboard">
+        <div class="page-header">
+          <div><h1 class="ph-title">Good day, <span id="dash-name">Resident</span>! 👋</h1>
+          <p class="ph-sub">Here's what's happening in Barangay Gordon Heights today.</p></div>
+        </div>
+        <div class="stats-row" id="dash-stats"></div>
+        <div class="two-col">
+          <div>
+            <div class="section-title">📌 Latest Announcements</div>
+            <div id="dash-announcements" class="ann-list"></div>
+            <button class="btn-link" onclick="navigate('announcements')">View all announcements →</button>
+          </div>
+          <div>
+            <div class="section-title">🚨 Active Emergency Alerts</div>
+            <div id="dash-alerts"></div>
+            <div class="section-title" style="margin-top:20px">📅 Upcoming Events</div>
+            <div id="dash-events"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ ANNOUNCEMENTS ══ -->
+      <section class="page" id="pg-announcements">
+        <div class="page-header">
+          <div><h1 class="ph-title">📢 Announcements</h1>
+          <p class="ph-sub">Official announcements from Barangay Gordon Heights</p></div>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-tabs" id="ann-filter-tabs">
+            <button class="ftab active" onclick="filterAnn(this,'all')">All</button>
+            <button class="ftab" onclick="filterAnn(this,'general')">General</button>
+            <button class="ftab" onclick="filterAnn(this,'emergency')">Emergency</button>
+            <button class="ftab" onclick="filterAnn(this,'event')">Events</button>
+            <button class="ftab" onclick="filterAnn(this,'health')">Health</button>
+          </div>
+          <input type="text" class="search-inline" id="ann-search" placeholder="Search…" oninput="filterAnn(null, null, this.value)"/>
+        </div>
+        <div id="ann-list-full" class="ann-list"></div>
+        <div class="pagination" id="ann-pagination"></div>
+      </section>
+
+      <!-- ══ CALENDAR ══ -->
+      <section class="page" id="pg-calendar">
+        <div class="page-header">
+          <div><h1 class="ph-title">📅 Event Calendar</h1>
+          <p class="ph-sub">Upcoming barangay events and activities</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="cal-nav">
+              <button class="btn-icon" onclick="calNav(-1)">‹</button>
+              <h3 id="cal-label" class="cal-title"></h3>
+              <button class="btn-icon" onclick="calNav(1)">›</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+          </div>
+          <div>
+            <div class="section-title">Events This Month</div>
+            <div id="month-events"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ ALERTS ══ -->
+      <section class="page" id="pg-alerts">
+        <div class="page-header">
+          <div><h1 class="ph-title">🚨 Emergency Alerts</h1>
+          <p class="ph-sub">Real-time emergency information and IoT sensor status</p></div>
+        </div>
+        <div class="iot-bar" id="iot-bar"></div>
+        <div class="section-title">Alert History</div>
+        <div id="alerts-list"></div>
+      </section>
+
+      <!-- ══ HOTLINES ══ -->
+      <section class="page" id="pg-hotlines">
+        <div class="page-header">
+          <div><h1 class="ph-title">📞 Emergency Hotlines</h1>
+          <p class="ph-sub">Important contact numbers – Barangay Gordon Heights & Olongapo City</p></div>
+        </div>
+        <div class="sos-card">
+          <div class="sos-num">9 1 1</div>
+          <div class="sos-label">National Emergency Hotline · Available 24/7</div>
+        </div>
+        <div class="hotlines-grid" id="hotlines-grid"></div>
+      </section>
+
+      <!-- ══ MY REPORTS ══ -->
+      <section class="page" id="pg-my-reports">
+        <div class="page-header">
+          <div><h1 class="ph-title">📝 My Reports</h1>
+          <p class="ph-sub">Track the status of your submitted reports</p></div>
+          <button class="btn-primary" onclick="navigate('report-issue')">+ New Report</button>
+        </div>
+        <div id="my-reports-list"></div>
+      </section>
+
+      <!-- ══ REPORT ISSUE ══ -->
+      <section class="page" id="pg-report-issue">
+        <div class="page-header">
+          <div><h1 class="ph-title">⚠️ Report an Issue</h1>
+          <p class="ph-sub">Submit a community concern to barangay officials</p></div>
+        </div>
+        <div class="form-card" style="max-width:620px">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Category *</label>
+              <select class="field-input" id="rpt-category">
+                <option value="">-- Select --</option>
+                <option>Road Damage</option><option>Flooding</option>
+                <option>Garbage Collection</option><option>Street Light</option>
+                <option>Drainage</option><option>Noise Complaint</option>
+                <option>Public Safety</option><option>Others</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Priority *</label>
+              <select class="field-input" id="rpt-priority">
+                <option value="Low">🟢 Low</option>
+                <option value="Medium" selected>🟡 Medium</option>
+                <option value="High">🔴 High</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Issue Title *</label>
+            <input type="text" class="field-input" id="rpt-title" placeholder="Brief description of the issue"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Detailed Description *</label>
+            <textarea class="field-input field-textarea" id="rpt-desc" placeholder="Describe the issue in detail — what, when, and how severe…"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Location / Street *</label>
+              <input type="text" class="field-input" id="rpt-location" placeholder="e.g. Block 5 Lot 12, Sampaguita St."/>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Landmark (optional)</label>
+              <input type="text" class="field-input" id="rpt-landmark" placeholder="e.g. Near the chapel"/>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="submitReport()">📤 Submit Report</button>
+            <button class="btn-secondary" onclick="resetReportForm()">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PROFILE ══ -->
+      <section class="page" id="pg-profile">
+        <div class="page-header">
+          <div><h1 class="ph-title">👤 My Profile</h1>
+          <p class="ph-sub">Your account information</p></div>
+        </div>
+        <div class="form-card" style="max-width:520px" id="profile-card"></div>
+      </section>
+
+      <!-- ══ CITIZEN PHOTO REPORT ══ -->
+      <section class="page" id="pg-photo-report">
+        <div class="page-header">
+          <div><h1 class="ph-title">📷 Photo Report</h1>
+          <p class="ph-sub">Capture and report an incident in Barangay Gordon Heights</p></div>
+        </div>
+        <div class="form-card" style="max-width:580px">
+          <div style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;gap:14px;align-items:center;color:#fff">
+            <div style="font-size:32px">📷</div>
+            <div>
+              <div style="font-weight:700;font-size:15px">Citizen Photo Report</div>
+              <div style="font-size:12px;opacity:.8;margin-top:3px">Your name and account are automatically attached to this report.</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Incident Description *</label>
+            <textarea class="field-input field-textarea" id="cpr-desc" placeholder="Describe the incident in detail — what happened, where exactly, and how severe..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">📸 Photo Evidence *</label>
+            <div class="camera-box-lg" id="cpr-camera-box" onclick="cprTriggerCamera()">
+              <video id="cpr-video" autoplay playsinline style="display:none;width:100%;border-radius:8px;max-height:240px;object-fit:cover"></video>
+              <canvas id="cpr-canvas" style="display:none"></canvas>
+              <img id="cpr-preview" style="display:none;width:100%;border-radius:8px;max-height:240px;object-fit:cover"/>
+              <div id="cpr-placeholder" style="text-align:center;padding:40px 0">
+                <div style="font-size:48px;margin-bottom:10px">📷</div>
+                <div style="font-size:14px;font-weight:600;color:var(--navy)">Tap to open camera</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px">Date &amp; time will be stamped on the photo</div>
+              </div>
+            </div>
+            <div id="cpr-cam-controls" style="display:none;gap:8px;margin-top:10px">
+              <button class="btn-cam" onclick="cprCapture()" style="flex:1">📸 Capture Photo</button>
+              <button class="btn-cam outline" onclick="cprRetake()" style="flex:1">🔄 Retake</button>
+            </div>
+            <div id="cpr-photo-actions" style="display:none;margin-top:10px">
+              <button class="btn-cam outline" style="width:100%" onclick="cprRetake()">🔄 Retake Photo</button>
+            </div>
+            <input type="file" id="cpr-upload" accept="image/*" capture="environment" style="display:none" onchange="cprHandleUpload(this)"/>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn-cam" onclick="cprStartCamera()" style="flex:1">📷 Open Camera</button>
+              <button class="btn-cam outline" onclick="document.getElementById('cpr-upload').click()" style="flex:1">🖼 Upload Photo</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">📍 GPS Location *</label>
+            <div class="location-box" id="cpr-location-box">
+              <span id="cpr-location-text" style="font-size:13px;color:var(--muted)">Location not yet captured</span>
+            </div>
+            <button class="btn-cam outline" style="margin-top:8px;width:100%" onclick="cprGetLocation()">📍 Capture My GPS Location</button>
+          </div>
+
+          <div style="background:#f0f8ff;border:1px solid #b5d4f4;border-radius:8px;padding:12px;font-size:12px;color:#185FA5;margin-bottom:16px;line-height:1.6">
+            ℹ️ Your report will include: <strong>Your Name</strong>, <strong>Photo</strong>, <strong>Date &amp; Time</strong>, and <strong>GPS Location</strong> — sent directly to the Barangay Admin.
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-primary" style="flex:1;justify-content:center" onclick="submitCitizenPhotoReport()">📤 Submit Photo Report</button>
+            <button class="btn-secondary" onclick="cprReset()">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ ADMIN DASHBOARD ══ -->
+      <section class="page" id="pg-admin-dashboard">
+        <div class="page-header">
+          <div><h1 class="ph-title">Admin Dashboard</h1>
+          <p class="ph-sub">Barangay Gordon Heights – Control Center</p></div>
+        </div>
+        <div class="stats-row" id="admin-stats"></div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title">📊 Announcement Views by Category</div>
+            <div id="admin-cat-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">📋 Recent Activity</div>
+            <div id="admin-activity"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-title">🏆 Top Announcements by Views</div>
+          <div id="admin-top-anns"></div>
+        </div>
+      </section>
+
+      <!-- ══ ADMIN POST ══ -->
+      <section class="page" id="pg-admin-post">
+        <div class="page-header">
+          <div><h1 class="ph-title">✏️ Post Announcement</h1>
+          <p class="ph-sub">Create an official announcement for residents</p></div>
+        </div>
+        <div class="form-card" style="max-width:680px">
+          <div class="field-group">
+            <label class="field-label">Title *</label>
+            <input type="text" class="field-input" id="post-title" placeholder="Announcement title…"/>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Category *</label>
+              <select class="field-input" id="post-category">
+                <option value="general">📌 General</option>
+                <option value="event">📅 Event</option>
+                <option value="health">💊 Health</option>
+                <option value="emergency">🚨 Emergency</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Target Audience</label>
+              <select class="field-input" id="post-audience">
+                <option>All Residents</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Content *</label>
+            <textarea class="field-input field-textarea" id="post-content" placeholder="Write your announcement here…" style="min-height:160px"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:0">
+              <input type="checkbox" id="post-pinned" style="accent-color:var(--gold);width:16px;height:16px"/>
+              <label for="post-pinned" style="font-size:14px;font-weight:500;margin-bottom:0">📌 Pin this announcement</label>
+            </div>
+            <div class="field-group" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:0">
+              <input type="checkbox" id="post-published" checked style="accent-color:var(--green);width:16px;height:16px"/>
+              <label for="post-published" style="font-size:14px;font-weight:500;margin-bottom:0">✅ Publish immediately</label>
+            </div>
+          </div>
+          <div class="form-actions" style="margin-top:20px">
+            <button class="btn-primary" onclick="postAnnouncement()">📢 Publish</button>
+            <button class="btn-secondary" onclick="clearPostForm()">Clear</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ ADMIN MANAGE ══ -->
+      <section class="page" id="pg-admin-manage">
+        <div class="page-header">
+          <div><h1 class="ph-title">📋 Manage Announcements</h1>
+          <p class="ph-sub">Edit, pin, or delete existing announcements</p></div>
+          <button class="btn-primary" onclick="navigate('admin-post')">+ New</button>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-tabs">
+            <button class="ftab active" onclick="loadManage(this,'all')">All</button>
+            <button class="ftab" onclick="loadManage(this,'general')">General</button>
+            <button class="ftab" onclick="loadManage(this,'emergency')">Emergency</button>
+            <button class="ftab" onclick="loadManage(this,'event')">Events</button>
+            <button class="ftab" onclick="loadManage(this,'health')">Health</button>
+          </div>
+        </div>
+        <div class="table-wrap"><table class="data-table" id="manage-table">
+          <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="manage-tbody"></tbody>
+        </table></div>
+      </section>
+
+      <!-- ══ ADMIN REPORTS ══ -->
+      <section class="page" id="pg-admin-reports">
+        <div class="page-header">
+          <div><h1 class="ph-title">📝 Issue Reports</h1>
+          <p class="ph-sub">Community-submitted issue reports</p></div>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-tabs">
+            <button class="ftab active" onclick="loadAdminReports(this,'')">All</button>
+            <button class="ftab" onclick="loadAdminReports(this,'Pending')">Pending</button>
+            <button class="ftab" onclick="loadAdminReports(this,'In Progress')">In Progress</button>
+            <button class="ftab" onclick="loadAdminReports(this,'Resolved')">Resolved</button>
+          </div>
+        </div>
+        <div class="table-wrap"><table class="data-table" id="reports-table">
+          <thead><tr><th>Title</th><th>Category</th><th>Priority</th><th>Submitted By</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="reports-tbody"></tbody>
+        </table></div>
+      </section>
+
+      <!-- ══ ADMIN EVENTS ══ -->
+      <section class="page" id="pg-admin-events">
+        <div class="page-header">
+          <div><h1 class="ph-title">📅 Manage Events</h1>
+          <p class="ph-sub">Create and manage barangay events</p></div>
+        </div>
+        <div class="two-col">
+          <div class="form-card">
+            <div class="card-title">Add New Event</div>
+            <div class="field-group"><label class="field-label">Title *</label>
+              <input type="text" class="field-input" id="evt-title" placeholder="Event title…"/></div>
+            <div class="field-group"><label class="field-label">Description</label>
+              <textarea class="field-input" id="evt-desc" placeholder="Event details…" rows="3"></textarea></div>
+            <div class="field-row">
+              <div class="field-group"><label class="field-label">Date *</label>
+                <input type="date" class="field-input" id="evt-date"/></div>
+              <div class="field-group"><label class="field-label">Time</label>
+                <input type="time" class="field-input" id="evt-time"/></div>
+            </div>
+            <div class="field-group"><label class="field-label">Location *</label>
+              <input type="text" class="field-input" id="evt-location" placeholder="Venue or area…"/></div>
+            <div class="field-group"><label class="field-label">Category</label>
+              <select class="field-input" id="evt-category">
+                <option value="governance">Governance</option>
+                <option value="health">Health</option>
+                <option value="environment">Environment</option>
+                <option value="livelihood">Livelihood</option>
+                <option value="sports">Sports</option>
+                <option value="social">Social</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="createEvent()">➕ Add Event</button>
+          </div>
+          <div>
+            <div class="section-title">All Events</div>
+            <div id="admin-events-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ ADMIN ALERTS ══ -->
+      <section class="page" id="pg-admin-alerts">
+        <div class="page-header">
+          <div><h1 class="ph-title">🚨 Send Emergency Alert</h1>
+          <p class="ph-sub">Broadcast urgent alerts to all residents</p></div>
+        </div>
+        <div class="two-col">
+          <div class="alert-composer">
+            <div class="field-group"><label class="field-label ac-label">Severity Level</label>
+              <div class="sev-row">
+                <button class="sev-btn" onclick="setSev(this,'LOW')" id="sev-LOW">🟢 Low</button>
+                <button class="sev-btn active" onclick="setSev(this,'MEDIUM')" id="sev-MEDIUM">🟡 Medium</button>
+                <button class="sev-btn" onclick="setSev(this,'HIGH')" id="sev-HIGH">🔴 High / Critical</button>
+              </div>
+            </div>
+            <div class="field-group"><label class="field-label ac-label">Alert Title *</label>
+              <input type="text" class="ac-input" id="alert-title" placeholder="e.g. Typhoon Warning – Signal No. 1"/></div>
+            <div class="field-group"><label class="field-label ac-label">Message *</label>
+              <textarea class="ac-input" id="alert-message" rows="4" placeholder="Provide clear instructions to residents…"></textarea></div>
+            <div class="field-group"><label class="field-label ac-label">Affected Area</label>
+              <input type="text" class="ac-input" id="alert-area" placeholder="e.g. All residents / Block 5 area"/></div>
+            <button class="btn-broadcast" onclick="sendAlert()">📡 Broadcast Alert to All Residents</button>
+          </div>
+          <div>
+            <div class="section-title">Active Alerts</div>
+            <div id="admin-alerts-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ ANALYTICS ══ -->
+      <section class="page" id="pg-admin-analytics">
+        <div class="page-header">
+          <div><h1 class="ph-title">📊 Analytics & Reports</h1>
+          <p class="ph-sub">Community engagement insights – Barangay Gordon Heights</p></div>
+          <button class="btn-secondary" onclick="loadAnalytics()">🔄 Refresh</button>
+        </div>
+        <div class="stats-row" id="analytics-stats"></div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title">📈 Views by Category</div>
+            <div id="views-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">📋 Report Status Breakdown</div>
+            <div id="reports-chart"></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:16px">
+          <div class="card">
+            <div class="card-title">👥 Residents by Street</div>
+            <div id="purok-chart"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">🏆 Top Announcements</div>
+            <div id="top-anns-chart"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ ADMIN USERS ══ -->
+      <section class="page" id="pg-admin-users">
+        <div class="page-header">
+          <div><h1 class="ph-title">👥 Registered Residents</h1>
+          <p class="ph-sub">All registered resident accounts</p></div>
+        </div>
+        <div class="table-wrap"><table class="data-table" id="users-table">
+          <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Address</th><th>Contact</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="users-tbody"></tbody>
+        </table></div>
+      </section>
+
+      <!-- ══ ADMIN GUEST REPORTS ══ -->
+      <section class="page" id="pg-admin-guest-reports">
+        <div class="page-header">
+          <div><h1 class="ph-title">📷 Photo Reports</h1>
+          <p class="ph-sub">Incident reports submitted by guests &amp; non-citizens</p></div>
+          <button class="btn-secondary" onclick="loadGuestReports(null,'')">🔄 Refresh</button>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-tabs">
+            <button class="ftab active" onclick="loadGuestReports(this,'')">All</button>
+            <button class="ftab" onclick="loadGuestReports(this,'Pending')">Pending</button>
+            <button class="ftab" onclick="loadGuestReports(this,'Reviewed')">Reviewed</button>
+            <button class="ftab" onclick="loadGuestReports(this,'Resolved')">Resolved</button>
+          </div>
+        </div>
+        <div id="guest-reports-list"></div>
+      </section>
+
+      <!-- ══ ADMIN SENSORS ══ -->
+      <section class="page" id="pg-admin-sensors">
+        <div class="page-header">
+          <div><h1 class="ph-title">📡 IoT Sensor Management</h1>
+          <p class="ph-sub">Monitor and update sensor readings – Barangay Gordon Heights</p></div>
+          <button class="btn-secondary" onclick="loadSensors()">🔄 Refresh</button>
+        </div>
+        <div class="sensors-grid" id="sensors-grid"></div>
+      </section>
+
+      <!-- ══ NON-CITIZEN DASHBOARD ══ -->
+      <section class="page" id="pg-nc-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="ph-title">Welcome, Visitor! 👋</h1>
+            <p class="ph-sub">You are accessing Barangay Gordon Heights as a non-citizen. Your access is limited.</p>
+          </div>
+        </div>
+        <div class="nc-access-banner">
+          <div style="font-size:32px">🧳</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;margin-bottom:4px">Non-Citizen Access</div>
+            <div style="font-size:13px;opacity:.85">You can report incidents with photo, view emergency alerts, and access hotlines.</div>
+          </div>
+        </div>
+        <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card" style="--c:var(--red);cursor:pointer" onclick="navigate('nc-report')">
+            <div class="stat-icon">📷</div>
+            <div class="stat-value" style="font-size:20px">Report</div>
+            <div class="stat-label">Submit Incident Photo</div>
+          </div>
+          <div class="stat-card" style="--c:var(--red);cursor:pointer" onclick="navigate('alerts')">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-value" style="font-size:20px">Alerts</div>
+            <div class="stat-label">Emergency Alerts</div>
+          </div>
+          <div class="stat-card" style="--c:var(--gold);cursor:pointer" onclick="navigate('hotlines')">
+            <div class="stat-icon">📞</div>
+            <div class="stat-value" style="font-size:20px">Hotlines</div>
+            <div class="stat-label">Emergency Contacts</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:4px">
+          <div class="card-title">⚠️ What you can access as a Non-Citizen</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#506070">
+            <div style="display:flex;gap:10px;align-items:center"><span style="font-size:18px">📷</span><div><strong>Report Incidents</strong> — Take or upload a photo with your location. Sent directly to admin.</div></div>
+            <div style="display:flex;gap:10px;align-items:center"><span style="font-size:18px">🚨</span><div><strong>Emergency Alerts</strong> — View active emergency alerts in the barangay.</div></div>
+            <div style="display:flex;gap:10px;align-items:center"><span style="font-size:18px">📞</span><div><strong>Hotlines</strong> — Access important emergency contact numbers.</div></div>
+            <div style="display:flex;gap:10px;align-items:center;opacity:.5"><span style="font-size:18px">🔒</span><div><strong>Announcements, Calendar, Reports</strong> — Not available for non-citizens.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ NON-CITIZEN REPORT ══ -->
+      <section class="page" id="pg-nc-report">
+        <div class="page-header">
+          <div><h1 class="ph-title">📷 Report an Incident</h1>
+          <p class="ph-sub">Capture and report what you witnessed in Barangay Gordon Heights</p></div>
+        </div>
+        <div class="form-card" style="max-width:580px">
+          <div style="background:linear-gradient(135deg,var(--red),#c0392b);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:center;color:#fff">
+            <div style="font-size:28px">📷</div>
+            <div><div style="font-weight:700;font-size:14px">Photo Incident Report</div>
+            <div style="font-size:12px;opacity:.85;margin-top:2px">Your report will include your photo, date &amp; time, and GPS location.</div></div>
+          </div>
+
+          <div class="field-group"><label class="field-label">Incident Description *</label>
+            <textarea class="field-input field-textarea" id="nc-desc" placeholder="Describe what you witnessed in detail..."></textarea></div>
+
+          <div class="field-group"><label class="field-label">📸 Photo Evidence *</label>
+            <div class="camera-box-lg" id="nc-camera-box" onclick="ncTriggerCamera()">
+              <video id="nc-video" autoplay playsinline style="display:none;width:100%;border-radius:8px;max-height:240px;object-fit:cover"></video>
+              <canvas id="nc-canvas" style="display:none"></canvas>
+              <img id="nc-preview" style="display:none;width:100%;border-radius:8px;max-height:240px;object-fit:cover"/>
+              <div id="nc-cam-placeholder" style="text-align:center;padding:36px 0">
+                <div style="font-size:48px;margin-bottom:10px">📷</div>
+                <div style="font-size:14px;font-weight:600;color:var(--navy)">Tap to capture photo</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px">Photo will include date &amp; time stamp</div>
+              </div>
+            </div>
+            <div id="nc-cam-controls" style="display:none;gap:8px;margin-top:10px">
+              <button class="btn-cam" onclick="ncCapture()" style="flex:1">📸 Capture</button>
+              <button class="btn-cam outline" onclick="ncRetake()" style="flex:1">🔄 Retake</button>
+            </div>
+            <div id="nc-photo-actions" style="display:none;margin-top:10px">
+              <button class="btn-cam outline" style="width:100%" onclick="ncRetake()">🔄 Retake Photo</button>
+            </div>
+            <input type="file" id="nc-upload" accept="image/*" capture="environment" style="display:none" onchange="ncHandleUpload(this)"/>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn-cam" onclick="ncStartCamera()" style="flex:1">📷 Open Camera</button>
+              <button class="btn-cam outline" onclick="document.getElementById('nc-upload').click()" style="flex:1">🖼 Upload Photo</button>
+            </div>
+          </div>
+
+          <div class="field-group"><label class="field-label">📍 GPS Location *</label>
+            <div class="location-box" id="nc-location-box">
+              <span id="nc-location-text" style="font-size:13px;color:var(--muted)">Location not yet captured</span>
+            </div>
+            <button class="btn-cam outline" style="margin-top:8px;width:100%" onclick="ncGetLocation()">📍 Capture My GPS Location</button>
+          </div>
+
+          <div style="background:#f0f8ff;border:1px solid #b5d4f4;border-radius:8px;padding:12px;font-size:12px;color:#185FA5;margin-bottom:16px;line-height:1.6">
+            ℹ️ Your report will automatically include: <strong>Date &amp; Time</strong>, <strong>GPS Coordinates</strong>, and your <strong>Photo</strong>. It will be sent directly to the Barangay Admin.
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-primary" style="background:var(--red);flex:1;justify-content:center" onclick="submitNcReport()">📤 Send Report to Admin</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast-stack" id="toast-stack"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.5/dist/socket.io.min.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
