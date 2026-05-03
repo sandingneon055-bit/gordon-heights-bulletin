@@ -2,4 +2,3 @@ flask==3.1.0
 flask-socketio==5.3.6
 gunicorn==21.2.0
 werkzeug==3.1.0
-eventlet==0.35.2
