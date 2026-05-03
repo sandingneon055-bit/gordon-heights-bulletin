@@ -22,7 +22,7 @@ app.config['SESSION_COOKIE_SECURE']   = bool(os.environ.get('RENDER', False))
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.permanent_session_lifetime = timedelta(hours=8)
-socketio = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
+socketio = SocketIO(app, cors_allowed_origins='*', async_mode='threading')
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'data', 'db.json')
 
